@@ -2,19 +2,15 @@
   "name": "nodejs-hw-mongodb",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js", 
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node src/index.js", 
+    "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "eslint": "^9.4.0",
-    "nodemon": "^2.0.22"
-  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -22,5 +18,9 @@
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.1",
     "pino": "^9.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.4.0",
+    "nodemon": "^2.0.22"
   }
 }

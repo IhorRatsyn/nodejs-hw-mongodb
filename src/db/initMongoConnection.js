@@ -1,17 +1,23 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-async function initMongoConnection() {
-  const { MONGODB_USER, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DB } =
-    process.env;
-  const uri = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
+const initMongoConnection = async () => {
+  const connectionString = process.env.MONGODB_URL;
+
+  if (!connectionString) {
+    console.error(
+      'MongoDB connection string is missing in environment variables.'
+    );
+    process.exit(1);
+  }
 
   try {
-    await mongoose.connect(uri);
+    await mongoose.connect(connectionString);
     console.log('Mongo connection successfully established!');
   } catch (error) {
     console.error('Failed to connect to MongoDB', error);
     process.exit(1);
   }
-}
+};
 
 module.exports = initMongoConnection;

@@ -15,6 +15,11 @@ function setupServer() {
     next();
   });
 
+  // Реєстрація роута для кореневого шляху
+  app.get('/', (req, res) => {
+    res.send('Hello, world!'); // Відповідь для кореневого шляху
+  });
+
   // Реєстрація роута для контактів
   app.use('/contacts', contactsRouter);
 

@@ -15,15 +15,12 @@ function setupServer() {
     next();
   });
 
-  // Реєстрація роута для кореневого шляху
   app.get('/', (req, res) => {
-    res.send('Hello, world!'); // Відповідь для кореневого шляху
+    res.send('MAIN PAGE');
   });
 
-  // Реєстрація роута для контактів
   app.use('/contacts', contactsRouter);
 
-  // Обробка неіснуючих роутів
   app.use((req, res) => {
     res.status(404).json({ message: 'Not found' });
   });

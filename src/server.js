@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const pino = require('pino');
-const contactsRouter = require('./routes/contacts');
+const contactsRouter = require('./routers/contacts');
+const errorHandler = require('./errorHandler');
+const notFoundHandler = require('./notFoundHandler');
 
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
 
@@ -21,9 +23,8 @@ function setupServer() {
 
   app.use('/contacts', contactsRouter);
 
-  app.use((req, res) => {
-    res.status(404).json({ message: 'Not found' });
-  });
+  app.use(notFoundHandler); // Middleware для обробки неіснуючих маршрутів
+  app.use(errorHandler); // Middleware для обробки помилок
 
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {

@@ -1,4 +1,5 @@
 const Contact = require('../db/models/Contact');
+const createError = require('http-errors');
 
 // Функція для отримання всіх контактів
 async function getAllContacts() {
@@ -19,7 +20,7 @@ async function getContactById(contactId) {
   try {
     const contact = await Contact.findById(contactId);
     if (!contact) {
-      throw new Error('Contact not found');
+      throw createError(404, 'Contact not found');
     }
     return {
       status: 'success',
@@ -31,7 +32,44 @@ async function getContactById(contactId) {
   }
 }
 
+// Функція для оновлення контакту за ID
+async function updateContactById(contactId, updatedFields) {
+  try {
+    const contact = await Contact.findByIdAndUpdate(contactId, updatedFields, {
+      new: true,
+    });
+    if (!contact) {
+      throw createError(404, 'Contact not found');
+    }
+    return {
+      status: 'success',
+      message: 'Successfully patched a contact!',
+      data: contact,
+    };
+  } catch (error) {
+    throw new Error('Failed to update contact');
+  }
+}
+
+// Функція для видалення контакту за ID
+async function deleteContactById(contactId) {
+  try {
+    const contact = await Contact.findByIdAndDelete(contactId);
+    if (!contact) {
+      throw createError(404, 'Contact not found');
+    }
+    return {
+      status: 'success',
+      message: 'Successfully deleted a contact!',
+    };
+  } catch (error) {
+    throw new Error('Failed to delete contact');
+  }
+}
+
 module.exports = {
   getAllContacts,
   getContactById,
+  updateContactById,
+  deleteContactById,
 };

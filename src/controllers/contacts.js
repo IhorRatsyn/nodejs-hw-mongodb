@@ -1,60 +1,116 @@
 const {
   getAllContacts,
   getContactById,
+  createContact,
   updateContactById,
   deleteContactById,
 } = require('../services/contacts');
-const createError = require('http-errors');
 
-// Контролер для отримання всіх контактів
-const getAllContactsController = async (req, res, next) => {
+// Контролер для отримання всіх контактів з пагінацією, сортуванням та фільтрацією
+const getAllContactsController = async (req, res) => {
+  const {
+    page = 1,
+    perPage = 10,
+    sortBy = 'name',
+    sortOrder = 'asc',
+    type,
+    isFavourite,
+  } = req.query;
   try {
-    const result = await getAllContacts();
+    const filter = { type, isFavourite };
+    const result = await getAllContacts(
+      parseInt(page),
+      parseInt(perPage),
+      sortBy,
+      sortOrder,
+      filter
+    );
     res.status(200).json(result);
   } catch (error) {
-    next(error);
+    res.status(500).json({
+      status: 'error',
+      message: error.message,
+      data: null,
+    });
   }
 };
 
-// Контролер для отримання контакту за ID
-const getContactByIdController = async (req, res, next) => {
+// Інші контролери залишаються без змін
+const getContactByIdController = async (req, res) => {
   const { contactId } = req.params;
   try {
     const result = await getContactById(contactId);
     res.status(200).json(result);
   } catch (error) {
-    next(error);
+    res.status(404).json({
+      status: 'error',
+      message: `Contact with ID ${contactId} not found!`,
+      data: null,
+    });
   }
 };
 
-// Контролер для оновлення контакту за ID
-const updateContactByIdController = async (req, res, next) => {
-  const { contactId } = req.params;
-  const updatedFields = req.body;
-
+const createContactController = async (req, res) => {
   try {
-    const updatedContact = await updateContactById(contactId, updatedFields);
-    res.status(200).json(updatedContact);
+    const result = await createContact(req.body);
+    res.status(201).json(result);
   } catch (error) {
-    next(error);
+    res.status(500).json({
+      status: 'error',
+      message: error.message,
+      data: null,
+    });
   }
 };
 
-// Контролер для видалення контакту за ID
-const deleteContactByIdController = async (req, res, next) => {
+const updateContactByIdController = async (req, res) => {
   const { contactId } = req.params;
+  try {
+    const result = await updateContactById(contactId, req.body);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error.message === 'Contact not found') {
+      res.status(404).json({
+        status: 'error',
+        message: error.message,
+        data: { message: 'Contact not found' },
+      });
+    } else {
+      res.status(500).json({
+        status: 'error',
+        message: error.message,
+        data: null,
+      });
+    }
+  }
+};
 
+const deleteContactByIdController = async (req, res) => {
+  const { contactId } = req.params;
   try {
     await deleteContactById(contactId);
-    res.status(204).send(); // Відповідь без тіла при успішному видаленні
+    res.status(204).send();
   } catch (error) {
-    next(error);
+    if (error.message === 'Contact not found') {
+      res.status(404).json({
+        status: 'error',
+        message: error.message,
+        data: { message: 'Contact not found' },
+      });
+    } else {
+      res.status(500).json({
+        status: 'error',
+        message: error.message,
+        data: null,
+      });
+    }
   }
 };
 
 module.exports = {
   getAllContactsController,
   getContactByIdController,
+  createContactController,
   updateContactByIdController,
   deleteContactByIdController,
 };

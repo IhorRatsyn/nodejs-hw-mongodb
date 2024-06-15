@@ -5,21 +5,34 @@ const {
   getContactByIdController,
   createContactController,
   updateContactByIdController,
-  deleteContactByIdController, // Додаємо новий контролер
+  deleteContactByIdController,
 } = require('../controllers/contacts');
-const ctrlWrapper = require('./ctrlWrapper');
+const ctrlWrapper = require('../middlewares/ctrlWrapper');
+const validateBody = require('../middlewares/validateBody');
+const {
+  createContactSchema,
+  updateContactSchema,
+} = require('../validation/contactValidation');
 
-// Роут для отримання всіх контактів
+// Роут для отримання всіх контактів з пагінацією, сортуванням та фільтрацією
 router.get('/', ctrlWrapper(getAllContactsController));
 
 // Роут для отримання контакту за ID
 router.get('/:contactId', ctrlWrapper(getContactByIdController));
 
-// Роут для створення нового контакту
-router.post('/', ctrlWrapper(createContactController));
+// Роут для створення нового контакту з валідацією
+router.post(
+  '/',
+  validateBody(createContactSchema),
+  ctrlWrapper(createContactController)
+);
 
-// Роут для оновлення контакту за ID
-router.patch('/:contactId', ctrlWrapper(updateContactByIdController));
+// Роут для оновлення контакту за ID з валідацією
+router.patch(
+  '/:contactId',
+  validateBody(updateContactSchema),
+  ctrlWrapper(updateContactByIdController)
+);
 
 // Роут для видалення контакту за ID
 router.delete('/:contactId', ctrlWrapper(deleteContactByIdController));

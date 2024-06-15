@@ -1,4 +1,5 @@
 const Contact = require('../db/models/Contact');
+const createError = require('http-errors');
 
 // Функція для отримання всіх контактів з пагінацією, сортуванням та фільтрацією
 async function getAllContacts(
@@ -28,7 +29,7 @@ async function getAllContacts(
       .sort(sortCriteria);
 
     return {
-      status: 'success',
+      status: 200,
       message: 'Successfully found contacts!',
       data: {
         data: contacts,
@@ -41,28 +42,65 @@ async function getAllContacts(
       },
     };
   } catch (error) {
-    throw new Error('Failed to retrieve contacts');
+    throw createError(500, 'Failed to retrieve contacts');
   }
 }
 
-// Інші функції залишаються без змін
+// Функція для отримання контакту за ID
 async function getContactById(contactId) {
   try {
     const contact = await Contact.findById(contactId);
     if (!contact) {
-      throw new Error('Contact not found');
+      throw createError(404, 'Contact not found');
     }
     return {
-      status: 'success',
+      status: 200,
       message: `Successfully found contact with id ${contactId}!`,
       data: contact,
     };
   } catch (error) {
-    throw new Error('Failed to retrieve contact');
+    throw createError(500, 'Failed to retrieve contact');
+  }
+}
+
+// Функція для оновлення контакту за ID
+async function updateContactById(contactId, updatedFields) {
+  try {
+    const contact = await Contact.findByIdAndUpdate(contactId, updatedFields, {
+      new: true,
+    });
+    if (!contact) {
+      throw createError(404, 'Contact not found');
+    }
+    return {
+      status: 200,
+      message: 'Successfully patched a contact!',
+      data: contact,
+    };
+  } catch (error) {
+    throw createError(500, 'Failed to update contact');
+  }
+}
+
+// Функція для видалення контакту за ID
+async function deleteContactById(contactId) {
+  try {
+    const contact = await Contact.findByIdAndDelete(contactId);
+    if (!contact) {
+      throw createError(404, 'Contact not found');
+    }
+    return {
+      status: 200,
+      message: 'Successfully deleted a contact!',
+    };
+  } catch (error) {
+    throw createError(500, 'Failed to delete contact');
   }
 }
 
 module.exports = {
   getAllContacts,
   getContactById,
+  updateContactById,
+  deleteContactById,
 };

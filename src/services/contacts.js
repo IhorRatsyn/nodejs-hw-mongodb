@@ -5,12 +5,15 @@ async function getAllContacts() {
   try {
     const contacts = await Contact.find();
     return {
-      status: 'success',
+      status: 200, // Змінено на статус код 200 (успішно)
       message: 'Successfully found contacts!',
       data: contacts,
     };
   } catch (error) {
-    throw new Error('Failed to retrieve contacts');
+    throw {
+      status: 500, // Змінено на статус код 500 (помилка сервера)
+      message: 'Failed to retrieve contacts',
+    };
   }
 }
 
@@ -19,15 +22,21 @@ async function getContactById(contactId) {
   try {
     const contact = await Contact.findById(contactId);
     if (!contact) {
-      throw new Error('Contact not found');
+      throw {
+        status: 404, // Змінено на статус код 404 (не знайдено)
+        message: 'Contact not found',
+      };
     }
     return {
-      status: 'success',
+      status: 200, // Змінено на статус код 200 (успішно)
       message: `Successfully found contact with id ${contactId}!`,
       data: contact,
     };
   } catch (error) {
-    throw new Error('Failed to retrieve contact');
+    throw {
+      status: 500, // Змінено на статус код 500 (помилка сервера)
+      message: 'Failed to retrieve contact',
+    };
   }
 }
 

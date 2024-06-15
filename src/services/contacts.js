@@ -6,12 +6,12 @@ async function getAllContacts() {
   try {
     const contacts = await Contact.find();
     return {
-      status: 'success',
+      status: 200,
       message: 'Successfully found contacts!',
       data: contacts,
     };
   } catch (error) {
-    throw new Error('Failed to retrieve contacts');
+    throw createError(500, 'Failed to retrieve contacts');
   }
 }
 
@@ -23,12 +23,12 @@ async function getContactById(contactId) {
       throw createError(404, 'Contact not found');
     }
     return {
-      status: 'success',
+      status: 200,
       message: `Successfully found contact with id ${contactId}!`,
       data: contact,
     };
   } catch (error) {
-    throw new Error('Failed to retrieve contact');
+    throw createError(500, 'Failed to retrieve contact');
   }
 }
 
@@ -42,12 +42,12 @@ async function updateContactById(contactId, updatedFields) {
       throw createError(404, 'Contact not found');
     }
     return {
-      status: 'success',
+      status: 200,
       message: 'Successfully patched a contact!',
       data: contact,
     };
   } catch (error) {
-    throw new Error('Failed to update contact');
+    throw createError(500, 'Failed to update contact');
   }
 }
 
@@ -59,11 +59,11 @@ async function deleteContactById(contactId) {
       throw createError(404, 'Contact not found');
     }
     return {
-      status: 'success',
+      status: 200,
       message: 'Successfully deleted a contact!',
     };
   } catch (error) {
-    throw new Error('Failed to delete contact');
+    throw createError(500, 'Failed to delete contact');
   }
 }
 

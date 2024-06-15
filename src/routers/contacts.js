@@ -7,7 +7,7 @@ const {
   updateContactByIdController,
   deleteContactByIdController,
 } = require('../controllers/contacts');
-const ctrlWrapper = require('../middlewares/ctrlWrapper');
+const ctrlWrapper = require('../routers/ctrlWrapper');
 const validateBody = require('../middlewares/validateBody');
 const {
   createContactSchema,
